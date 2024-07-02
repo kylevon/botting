@@ -12,6 +12,7 @@ import time
 import pyautogui
 import random
 import json
+from utils import tui
 
 
 bank_minimap_location = [
@@ -28,24 +29,14 @@ ordan_minimap_location = [
     (607, 135),
 ]
 
-
-def get_integer_input(prompt: str) -> int:
-    while True:
-        try:
-            user_input = int(input(prompt + ": "))
-            return user_input
-        except ValueError:
-            print("Invalid input. Please enter an integer.")
-
-
 class IronOreMaker:
     def __init__(self):
-        load_file = get_integer_input("Use previous configs? (1 = yes, 0 = no)")
+        load_file = tui.get_integer_input("Use previous configs? (1 = yes, 0 = no)")
         if load_file == 1:
             self.load("previous_iron_configs.json")
         else:
-            self.bank_first_item_column = get_integer_input("column of glass at bank")
-            self.bank_first_item_row = get_integer_input("row of glass at bank")
+            self.bank_first_item_column = tui.get_integer_input("column of glass at bank")
+            self.bank_first_item_row = tui.get_integer_input("row of glass at bank")
             print("This script will continue forever")
             self.save("previous_iron_configs.json")
         self.first_loop = True
@@ -185,8 +176,8 @@ class IronOreMaker:
         )
         cursor.click_polygon(
             polygons.inventory_polygons[2],
-            ignore_post_randomness=True,
-            ignore_predictive_movement=False,
+            ignore_post_randomness=False,
+            ignore_predictive_movement=True,
         )
         randomizations.sleep_at_least(0.6)
         keyboard.press("6")

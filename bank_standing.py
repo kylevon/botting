@@ -2,6 +2,7 @@ from utils import antiban_motions
 from utils import randomizations
 from utils import keyboard
 from utils import cursor
+from utils import tui
 from utils.obtain_polygon import obtain_polygon
 from utils.constants import colors
 from utils.constants import polygons
@@ -11,34 +12,25 @@ import random
 import json
 
 
-def get_integer_input(prompt: str) -> int:
-    while True:
-        try:
-            user_input = int(input(prompt + ": "))
-            return user_input
-        except ValueError:
-            print("Invalid input. Please enter an integer.")
-
-
 class BankStandingConfigs:
     def __init__(self):
-        load_file = get_integer_input("Use previous configs? (1 = yes, 0 = no)")
+        load_file = tui.get_integer_input("Use previous configs? (1 = yes, 0 = no)")
         if load_file == 1:
             self.load("previous_bank_standing_configs.json")
         else:
-            self.modality = get_integer_input("Modality: 1/2 items")
+            self.modality = tui.get_integer_input("Modality: 1/2 items")
             assert self.modality == 1 or self.modality == 2
-            self.bank_first_item_column = get_integer_input("column at bank")
-            self.bank_first_item_row = get_integer_input("row at bank")
-            self.loops_left = get_integer_input("Amount of items to do")
+            self.bank_first_item_column = tui.get_integer_input("column at bank")
+            self.bank_first_item_row = tui.get_integer_input("row at bank")
+            self.loops_left = tui.get_integer_input("Amount of items to do")
             if self.modality == 1:
                 self.loops_left //= 27
             if self.modality == 2:
                 self.loops_left //= 14
-            self.min_seconds = get_integer_input(
+            self.min_seconds = tui.get_integer_input(
                 "Min seconds to do loop (10 for herb finish)"
             )
-            self.optimal_seconds = get_integer_input(
+            self.optimal_seconds = tui.get_integer_input(
                 "optimal seconds to do loop (12 for herb finish)"
             )
             self.save("previous_bank_standing_configs.json")

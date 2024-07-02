@@ -9,6 +9,7 @@ DELTA_Y_BANK = 36
 DELTA_X_INVENTORY = 42
 DELTA_Y_INVENTORY = 36
 
+
 def create_grid(original_polygon, delta_x, delta_y, num_rows, num_columns):
     out = []
     for row in range(num_rows):
@@ -27,19 +28,18 @@ inventory_polygons = create_grid(
     FIRST_SLOT_INVENTORY, DELTA_X_INVENTORY, DELTA_Y_INVENTORY, 7, 4
 )
 
-shop_polygons = create_grid(
-    FIRST_SHOP_POLYGON, DELTA_X_BANK, DELTA_Y_BANK, 1, 7
-)
+shop_polygons = create_grid(FIRST_SHOP_POLYGON, DELTA_X_BANK, DELTA_Y_BANK, 1, 7)
 
-shop_close_polygon = [
-    [473, 32], [473, 49], [489, 49], [489, 32]
-]
+shop_close_polygon = [[473, 32], [473, 49], [489, 49], [489, 32]]
+
 
 def get_bank_polygon(row=0, column=0):
     return bank_polygons[row * 8 + column]
 
+
 def get_inventory_polygon(row=0, column=0):
     return inventory_polygons[row * 4 + column]
+
 
 bank_close = [
     (475, 30),
@@ -74,4 +74,11 @@ logout_button = [
     (706, 423),
     (705, 441),
     (703, 445),
+]
+
+logout_interface_close_if_world_switch_is_on = [
+(714, 222),
+(715, 207),
+(730, 208),
+(729, 223),
 ]

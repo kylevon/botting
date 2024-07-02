@@ -63,7 +63,7 @@ class SteelBarMaker:
             )
             cursor.click_polygon(
                 polygons.bank_close,
-                ignore_post_randomness=False,
+                ignore_post_randomness=True,
                 ignore_predictive_movement=True,
             )
             randomizations.sleep_a_tick()
@@ -152,13 +152,13 @@ class SteelBarMaker:
         )
         cursor.click_polygon(
             polygons.inventory_polygons[1],
-            ignore_post_randomness=False,
+            ignore_post_randomness=True,
             ignore_predictive_movement=True,
         )
         randomizations.sleep_a_tick()
         cursor.click_color_polygon(
             colors.PINK,
-            ignore_post_randomness=False,
+            ignore_post_randomness=True,
             ignore_predictive_movement=True,
         )
         randomizations.sleep_a_tick()

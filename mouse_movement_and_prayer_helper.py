@@ -15,40 +15,40 @@ Point = collections.namedtuple("Point", "x y")
 multiplier = 3
 prayer_polygons = {
     "mage": [
-        [1534, 1055],
-        [1534, 973],
-        [1605, 983],
-        [1601, 1055],
+        (1537, 907),
+        (1538, 849),
+        (1600, 854),
+        (1596, 918),
     ],
     "ranged": [
-        [1630, 1056],
-        [1634, 982],
-        [1697, 982],
-        [1695, 1051],
+        (1639, 909),
+        (1638, 850),
+        (1692, 851),
+        (1692, 913),
     ],
     "melee": [
-        [1718, 1060],
-        [1720, 980],
-        [1795, 980],
-        [1790, 1055],
+        (1719, 915),
+        (1724, 852),
+        (1797, 848),
+        (1792, 918),
     ],
     "mage_buff": [
-        [1535, 1168],
-        [1535, 1097],
-        [1599, 1101],
-        [1603, 1170],
+        (1536, 1007),
+        (1539, 946),
+        (1597, 950),
+        (1603, 1012),
     ],
     "ranged_buff": [
-        [1637, 1168],
-        [1635, 1095],
-        [1695, 1100],
-        [1695, 1172],
+        (1632, 1002),
+        (1630, 951),
+        (1701, 953),
+        (1695, 1012),
     ],
     "melee_buff": [
-        [1727, 1168],
-        [1724, 1103],
-        [1797, 1102],
-        [1790, 1163],
+        (1722, 998),
+        (1722, 950),
+        (1797, 951),
+        (1796, 1008),
     ],
 }
 
@@ -100,11 +100,16 @@ def pray(prayer):
         distortion_st_dev=distortion_st_dev,
         distortion_frequency=distortion_frequency,
         tween=tween,
-        target_points=max(2, target_points//10),
+        target_points=max(2, target_points // 10),
     )
 
     cursor.click_polygon(
-        prayer_polygons[prayer], av_speed=0.005, disable_offset=True, curve=human_curve
+        prayer_polygons[prayer],
+        av_speed=0.005,
+        disable_offset=True,
+        curve=human_curve,
+        ignore_post_randomness=True,
+        ignore_predictive_movement=True,
     )
 
 
@@ -129,11 +134,11 @@ def on_press(key):
             if key.char in key_to_prayer_mapping:
                 pray(key_to_prayer_mapping[key.char])
             # if key.char in key_to_move_mapping:
-                # cursor.move_offset(*key_to_move_mapping[key.char], av_speed=0.0005)
+            # cursor.move_offset(*key_to_move_mapping[key.char], av_speed=0.0005)
             # elif key.char == "c":
-                # cursor.click(button="left")
+            # cursor.click(button="left")
             # elif key.char == "f":
-                # cursor.click(button="right")
+            # cursor.click(button="right")
 
     except AttributeError:
         pass

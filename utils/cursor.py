@@ -95,7 +95,7 @@ def click_at(
 ):
     move_to(x, y, av_speed=av_speed, disable_offset=disable_offset, curve=curve)
     click_duration = 0.05 + random.expovariate(10)
-    print(f"Click_duration = {click_duration}")
+    print(f"Click_duration = {click_duration}, x,y: {x}, {y}")
     pyautogui.mouseDown()
     time.sleep(click_duration)
     pyautogui.mouseUp()

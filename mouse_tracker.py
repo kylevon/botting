@@ -8,7 +8,8 @@ def on_press(key):
             x, y = mouse_controller.position
             dx, dy = obtain_offset()
             # dx, dy = 0,0
-            print(f"Mouse is at ({x - dx}, {y - dy})")
+            # print(f"Mouse is at ({x - dx}, {y - dy})")
+            print(f"Mouse is at ({x}, {y})")
     except AttributeError:
         pass
 
