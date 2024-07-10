@@ -1,6 +1,8 @@
 from utils import antiban_motions
 from utils import randomizations
 from utils import keyboard
+from utils.logout import logout
+from utils import game_information
 from utils import cursor
 from utils import tui
 from utils.obtain_polygon import obtain_polygon
@@ -15,6 +17,7 @@ import json
 class BankStandingConfigs:
     def __init__(self):
         load_file = tui.get_integer_input("Use previous configs? (1 = yes, 0 = no)")
+        self.current_exp = 0
         if load_file == 1:
             self.load("previous_bank_standing_configs.json")
         else:
@@ -22,11 +25,6 @@ class BankStandingConfigs:
             assert self.modality == 1 or self.modality == 2
             self.bank_first_item_column = tui.get_integer_input("column at bank")
             self.bank_first_item_row = tui.get_integer_input("row at bank")
-            self.loops_left = tui.get_integer_input("Amount of items to do")
-            if self.modality == 1:
-                self.loops_left //= 27
-            if self.modality == 2:
-                self.loops_left //= 14
             self.min_seconds = tui.get_integer_input(
                 "Min seconds to do loop (10 for herb finish)"
             )
@@ -46,53 +44,73 @@ class BankStandingConfigs:
 
     def do_a_loop(self) -> int:
         # Returns time to wait
-        if self.loops_left:
-            self.loops_left -= 1
-            cursor.click_color_polygon(colors.PINK)
-            time.sleep(randomizations.tick_duration())
-            cursor.move_to_polygon(polygons.bank_deposit)
-            time.sleep(randomizations.tick_duration() / 2)
-            cursor.click()
-            cursor.click_polygon(
-                polygons.get_bank_polygon(
-                    column=self.bank_first_item_column, row=self.bank_first_item_row
-                )
-            )
-            cursor.click_polygon(
-                polygons.get_bank_polygon(
-                    column=self.bank_first_item_column + 1, row=self.bank_first_item_row
-                )
-            )
-            cursor.click_polygon(polygons.bank_close)
-            possible_two_items = [
-                [(3, 0), (4, 0)],
-                [(3, 1), (4, 1)],
-                [(3, 1), (3, 2)],
-                [(2, 2), (3, 2)],
-                [(2, 3), (3, 3)],
-            ]
-            first_item, second_item = random.choice(possible_two_items)
-            cursor.move_to_polygon(polygons.get_inventory_polygon(*first_item))
-            time.sleep(randomizations.tick_duration() / 2)
-            cursor.click()
-            cursor.click_polygon(polygons.get_inventory_polygon(*second_item))
-            time.sleep(randomizations.tick_duration())
-            keyboard.press("space")
-            time_to_wait = -1
-            while time_to_wait < self.min_seconds:
-                time_to_wait = random.gauss(
-                    self.optimal_seconds, (self.optimal_seconds - self.min_seconds) / 4
-                )
-            return time_to_wait
+        if self.current_exp != 0:
+            next_exp = game_information.get_total_exp()
+            if next_exp == self.current_exp:
+                raise Exception("Did not increase exp!")
+            else:
+                self.current_exp = next_exp
         else:
-            print("Bankstanding is done!")
-            return 2**32
+            self.current_exp = game_information.get_total_exp()
+        cursor.click_color_polygon(
+            colors.PINK, ignore_post_randomness=True, ignore_predictive_movement=True
+        )
+        time.sleep(randomizations.tick_duration())
+        cursor.move_to_polygon(polygons.bank_deposit)
+        time.sleep(randomizations.tick_duration() / 2)
+        cursor.click()
+        cursor.click_polygon(
+            polygons.get_bank_polygon(
+                column=self.bank_first_item_column, row=self.bank_first_item_row
+            ),
+            ignore_post_randomness=True,
+            ignore_predictive_movement=True,
+        )
+        cursor.click_polygon(
+            polygons.get_bank_polygon(
+                column=self.bank_first_item_column + 1, row=self.bank_first_item_row
+            ),
+            ignore_post_randomness=True,
+            ignore_predictive_movement=True,
+        )
+        cursor.click_polygon(
+            polygons.bank_close,
+            ignore_post_randomness=True,
+            ignore_predictive_movement=True,
+        )
+        possible_two_items = [
+            [(3, 0), (4, 0)],
+            [(3, 1), (4, 1)],
+            [(3, 1), (3, 2)],
+            [(2, 2), (3, 2)],
+            [(2, 3), (3, 3)],
+        ]
+        first_item, second_item = random.choice(possible_two_items)
+        cursor.move_to_polygon(polygons.get_inventory_polygon(*first_item))
+        time.sleep(randomizations.tick_duration() / 2)
+        cursor.click()
+        cursor.click_polygon(
+            polygons.get_inventory_polygon(*second_item),
+            ignore_predictive_movement=False,
+        )
+        time.sleep(randomizations.tick_duration())
+        keyboard.press("space")
+        time.sleep(2)
+        if game_information.get_total_exp() == self.current_exp:
+            keyboard.press("space")
+        return randomizations.random_number_at_least(self.min_seconds - 2)
 
 
 def main() -> None:
     configs = BankStandingConfigs()
-    while True:
-        time.sleep(configs.do_a_loop())
+    try:
+        while True:
+            time.sleep(configs.do_a_loop())
+    except Exception as err:
+        print(err)
+        print("Loggin out!!!")
+        logout()
+
 
 if __name__ == "__main__":
     main()

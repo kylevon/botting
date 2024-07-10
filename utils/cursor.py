@@ -160,15 +160,26 @@ def click_color_polygon(
     ignore_predictive_movement=True,
     ignore_post_randomness=False,
 ):
-    click_polygon(
-        detect_color_polygon(*color),
-        av_speed=av_speed,
-        disable_offset=True,
-        curve=curve,
-        ignore_predictive_movement=ignore_predictive_movement,
-        ignore_post_randomness=ignore_post_randomness,
-    )
-
+    try:
+        click_polygon(
+            detect_color_polygon(*color),
+            av_speed=av_speed,
+            disable_offset=True,
+            curve=curve,
+            ignore_predictive_movement=ignore_predictive_movement,
+            ignore_post_randomness=ignore_post_randomness,
+        )
+    except ZeroDivisionError as err:
+        print(err)
+        randomizations.sleep_at_least(1)
+        click_polygon(
+            detect_color_polygon(*color),
+            av_speed=av_speed,
+            disable_offset=True,
+            curve=curve,
+            ignore_predictive_movement=ignore_predictive_movement,
+            ignore_post_randomness=ignore_post_randomness,
+        )
 
 def move_to_with_noise(polygon, noise=50, disable_offset=False):
     x, y = randomizations.random_point_in_polygon(polygon)

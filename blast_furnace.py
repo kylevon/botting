@@ -104,7 +104,7 @@ class SteelBarMaker:
                 )
                 randomizations.sleep_at_least(1)
                 if game_information.get_inventory_slot(2) is not None:
-                    raise Exception("An error occured")
+                    raise Exception("An error occured, throwing bars")
             cursor.move_to_color_polygon(colors.BLUE)
             while game_information.get_total_exp() == previous_exp:
                 randomizations.sleep_a_tick()
@@ -128,7 +128,7 @@ class SteelBarMaker:
                 randomizations.sleep_a_tick()
                 randomizations.sleep_a_tick()
                 if game_information.get_inventory_slot(2) is None:
-                    raise Exception("An error occured")
+                    raise Exception("An error occured, did not receive bars ")
             cursor.click_color_polygon(
                 colors.PINK,
                 ignore_post_randomness=True,

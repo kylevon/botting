@@ -54,9 +54,12 @@ class IronOreMaker:
     def do_a_loop(self) -> float:
         next_exp = game_information.get_total_exp()
         if next_exp <= self.previous_exp:
-            raise Exception("The loop did not gain exp!")
-        else:
-            self.previous_exp = next_exp
+            print("EXP DID NOT INCREASE, WAITING TO SEE IF ITS THE API")
+            time.sleep(10)
+            next_exp = game_information.get_total_exp()
+            if next_exp <= self.previous_exp:
+                raise Exception("The loop did not gain exp!")
+        self.previous_exp = next_exp
         pressed_f1 = False
         possible_banking_motions = [
             (row, column) for row in range(1, 7) for column in range(4)
@@ -179,17 +182,58 @@ class IronOreMaker:
             ignore_post_randomness=False,
             ignore_predictive_movement=True,
         )
-        randomizations.sleep_at_least(0.6)
+        current_exp = game_information.get_total_exp()
+        randomizations.sleep_at_least(0.8)
         keyboard.press("6")
+        randomizations.sleep_at_least(6)
+        if game_information.get_total_exp() == current_exp:
+            keyboard.press("6")
+            if game_information.get_inventory_slot(27) is None:
+                cursor.click_color_polygon(colors.PINK)
+                randomizations.sleep_at_least(1)
+                cursor.click_polygon(
+                    polygons.get_bank_polygon(
+                        row=self.bank_first_item_row,
+                        column=self.bank_first_item_column,
+                    ),
+                    ignore_post_randomness=True,
+                    ignore_predictive_movement=True,
+                )
+                cursor.click_polygon(
+                    polygons.bank_close,
+                    ignore_predictive_movement=True,
+                    ignore_post_randomness=True,
+                )
+                randomizations.sleep_at_least(1)
+                cursor.click_polygon(
+                    polygons.inventory_polygons[1],
+                    ignore_post_randomness=True,
+                    ignore_predictive_movement=True,
+                )
+                cursor.click_polygon(
+                    polygons.inventory_polygons[2],
+                    ignore_post_randomness=False,
+                    ignore_predictive_movement=True,
+                )
+                randomizations.sleep_at_least(1)
+                keyboard.press("6")
         return 46.9
 
 
 def main() -> None:
     configs = IronOreMaker()
+    error_count = 0
     try:
         while True:
-            time.sleep(configs.do_a_loop())
-            next_exp = game_information.get_total_exp()
+            try:
+                time.sleep(configs.do_a_loop())
+                next_exp = game_information.get_total_exp()
+            except ZeroDivisionError as err:
+                # Change world
+                print("ZeroDivisionError!")
+                configs.previous_exp -= 1
+                keyboard.multiple_key_press(["ctrl", "shift", "2"])
+                randomizations.sleep_at_least(7.2)
     except Exception as err:
         print(err)
         print("Error encountered, logging of")
